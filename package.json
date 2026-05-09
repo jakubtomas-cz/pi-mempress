@@ -1,0 +1,18 @@
+{
+  "name": "pi-mempress",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A simple extension for pi.dev agent that displays current memory pressure and usage in the status line",
+  "main": "index.ts",
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.2"
+  },
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  }
+}
