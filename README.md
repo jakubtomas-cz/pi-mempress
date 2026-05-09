@@ -1,6 +1,8 @@
 ## pi-mempress
 
-A simple extension for pi.dev agent that displays current memory pressure and usage in the status line
+A simple extension for pi.dev agent that displays current memory pressure and usage in the status line.
+
+Works only on Mac.
 
 ### Installation
 
