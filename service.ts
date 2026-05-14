@@ -4,7 +4,7 @@ import { promisify } from "util";
 
 const execAsync = promisify(exec);
 
-export function getPressureColor(pressure: number): ThemeColor {
+export function getColorStatus(pressure: number): ThemeColor {
   if (pressure < 70) return "success";
   if (pressure < 80) return "warning";
   return "error";
@@ -86,15 +86,24 @@ export async function getTotalMemory(): Promise<number> {
 
 export const getMemoryInfo = async (totalMemory: number, theme: Theme) => {
   const pressure = await measurePressure();
+  const pressureColor = getColorStatus(pressure);
+
   const currentUsage = await memoryUsageGB();
-  const pColor = getPressureColor(pressure);
+  const usageColor = getColorStatus(currentUsage / (totalMemory / 100));
+
+  const linesAmount = Math.ceil(pressure / 10);
+  const linesRenderer = Array.from({ length: linesAmount }).fill("|");
+  const spacesRenderer = Array.from({ length: 10 - linesAmount }).fill(
+    "\u00A0",
+  );
+
   const pressurePart = theme.fg(
     "dim",
-    `[Pressure: ${theme.fg(pColor, String(pressure) + "%")}${theme.fg("dim", "]")}`,
+    `[Pressure: ${theme.fg(pressureColor, `${linesRenderer.join("")}${spacesRenderer.join("")}`)} ${pressure < 10 ? "\u00A0" : ""}${theme.fg(pressureColor, String(pressure) + "%")}${theme.fg("dim", "]")}`,
   );
   const usagePart = theme.fg(
     "dim",
-    `[Usage: ${currentUsage.toFixed(2)} / ${totalMemory.toFixed(2)} GB]`,
+    `[Usage: ${theme.fg(usageColor, currentUsage.toFixed(2))} ${theme.fg("dim", `/ ${totalMemory.toFixed(2)} GB]`)}`,
   );
 
   return `${pressurePart} ${usagePart}`;
