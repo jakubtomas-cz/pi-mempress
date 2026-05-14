@@ -1,30 +1,26 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { getTotalMemory, getMemoryInfo } from "./service";
 
-export default function (pi: ExtensionAPI) {
-  let totalMemory = 0;
+let interval: NodeJS.Timeout = null!;
+let totalMemory = 0;
+
+const printer = async (ctx: any) => {
+  try {
+    const theme = ctx.ui.theme;
+    ctx.ui.setStatus("mem-pressure", await getMemoryInfo(totalMemory, theme));
+  } catch (error) {}
+};
+
+export default async function (pi: ExtensionAPI) {
+  totalMemory = await getTotalMemory();
 
   pi.on("session_start", async (_event, ctx) => {
-    const theme = ctx.ui.theme;
+    if (interval) clearInterval(interval);
 
     try {
-      totalMemory = await getTotalMemory();
-      console.log(`[mempress] Total memory fetched: ${totalMemory} GB`);
-    } catch (err: any) {
-      console.error(`[mempress] Failed to fetch total memory: ${err.message}`);
+      interval = setInterval(async () => printer(ctx), 1000);
+    } catch (error) {
+      console.log("[pi-mempress] error: " + error);
     }
-
-    ctx.ui.setStatus("mem-pressure", await getMemoryInfo(totalMemory, theme));
-
-    setInterval(async () => {
-      try {
-        ctx.ui.setStatus(
-          "mem-pressure",
-          await getMemoryInfo(totalMemory, theme),
-        );
-      } catch (err: any) {
-        console.error(`[mempress] Update failed: ${err.message}`);
-      }
-    }, 1000);
   });
 }
