@@ -1,2 +1,6 @@
 #!/bin/bash
-bun ./print-info.ts
+# Find the absolute path of the directory containing this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Invoke bun using the absolute path to the target file
+bun "$SCRIPT_DIR/print-info.ts"
