@@ -9,6 +9,9 @@
       "./index.ts"
     ]
   },
+  "scripts": {
+    "build": "bun build ./print-info.ts --compile --outfile mp"
+  },
   "devDependencies": {
     "@types/node": "^25.6.2"
   },
