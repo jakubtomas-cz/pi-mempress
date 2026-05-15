@@ -18,6 +18,11 @@ export default async function (pi: ExtensionAPI) {
     if (interval) clearInterval(interval);
 
     try {
+      ctx.ui.setStatus(
+        "mem-pressure",
+        await getMemoryInfo(totalMemory, ctx.ui.theme),
+      );
+
       interval = setInterval(async () => printer(ctx), 1000);
     } catch (error) {
       console.log("[pi-mempress] error: " + error);
